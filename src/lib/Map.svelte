@@ -17,6 +17,11 @@
 
     addServiceMarkers()
 
+    // Expose update function globally for HTML integration
+    window.updateMapServices = (newServices) => {
+      services = newServices
+    }
+
     return () => {
       if (map) {
         map.remove()
@@ -25,6 +30,8 @@
   })
 
   function addServiceMarkers() {
+    if (!map) return
+    
     markers.forEach(marker => map.removeLayer(marker))
     markers = []
 

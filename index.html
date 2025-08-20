@@ -96,10 +96,10 @@
                 <div>
                     <h3 class="font-semibold text-gray-800 mb-2">Service Category</h3>
                     <div class="space-y-2">
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Food</span></label>
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Housing</span></label>
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Legal Aid</span></label>
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Healthcare</span></label>
+                        <label class="flex items-center"><input type="checkbox" id="filter-food" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Food" checked> <span class="ml-2 text-gray-700">Food</span></label>
+                        <label class="flex items-center"><input type="checkbox" id="filter-housing" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Housing"> <span class="ml-2 text-gray-700">Housing</span></label>
+                        <label class="flex items-center"><input type="checkbox" id="filter-legal" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Legal Aid" checked> <span class="ml-2 text-gray-700">Legal Aid</span></label>
+                        <label class="flex items-center"><input type="checkbox" id="filter-healthcare" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Healthcare"> <span class="ml-2 text-gray-700">Healthcare</span></label>
                     </div>
                 </div>
                 
@@ -308,12 +308,48 @@
                 modal.classList.remove('hidden');
             }
 
-            // Populate results
-            mockServices.forEach(service => {
-                const card = createResultCard(service);
-                card.addEventListener('click', () => showDetails(card.dataset.serviceId));
-                resultsContainer.appendChild(card);
+            // Function to get selected categories
+            function getSelectedCategories() {
+                const checkboxes = document.querySelectorAll('.category-filter:checked');
+                return Array.from(checkboxes).map(cb => cb.dataset.category);
+            }
+
+            // Function to filter and display results
+            function filterAndDisplayResults() {
+                const selectedCategories = getSelectedCategories();
+                const filteredServices = mockServices.filter(service => 
+                    selectedCategories.includes(service.category)
+                );
+
+                // Clear existing results
+                resultsContainer.innerHTML = '';
+
+                // Update count
+                const countElement = document.querySelector('.p-4 .font-bold');
+                if (countElement) {
+                    countElement.textContent = `${filteredServices.length} services found`;
+                }
+
+                // Populate filtered results
+                filteredServices.forEach(service => {
+                    const card = createResultCard(service);
+                    card.addEventListener('click', () => showDetails(card.dataset.serviceId));
+                    resultsContainer.appendChild(card);
+                });
+
+                // Update map if needed (trigger Svelte reactivity)
+                if (window.updateMapServices) {
+                    window.updateMapServices(filteredServices);
+                }
+            }
+
+            // Add event listeners to category filters
+            document.querySelectorAll('.category-filter').forEach(checkbox => {
+                checkbox.addEventListener('change', filterAndDisplayResults);
             });
+
+            // Initial population
+            filterAndDisplayResults();
 
             // Modal close events
             closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
