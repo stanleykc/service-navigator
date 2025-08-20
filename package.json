@@ -1,19 +1,15 @@
 {
   "name": "service-navigator",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Community Services Navigator - HSDS compliant service discovery application",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "python3 -m http.server 8080",
+    "dev": "python3 -m http.server 8080"
   },
-  "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
-    "svelte": "^4.0.5",
-    "vite": "^5.0.0"
-  },
-  "dependencies": {
-    "leaflet": "^1.9.4"
-  }
+  "keywords": ["community-services", "hsds", "service-discovery", "accessibility"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
 }

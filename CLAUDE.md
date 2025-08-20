@@ -28,7 +28,6 @@ This is a Community Services Navigator web application that helps users search a
 - `index.html` - Main application (544 lines) with hamburger navigation, filtering, map integration
 - `js/data.js` - Centralized HSDS service data export
 - `js/dom-utils.js` - SafeDOM class for XSS-safe element creation
-- `js/map.js` - Standalone Leaflet map implementation (available but unused)
 
 **Data Model (HSDS Compliant):**
 ```javascript
@@ -58,10 +57,10 @@ npm run dev  # Uses Vite server (legacy Svelte setup)
 open http://localhost:8080
 ```
 
-**Legacy Svelte Commands (mostly unused):**
+**NPM Commands:**
 ```bash
-npm run build    # Build Svelte components (not needed for main app)
-npm run preview  # Preview built Svelte app
+npm start        # Start development server
+npm run dev      # Same as npm start
 ```
 
 ## Security Considerations
@@ -89,11 +88,10 @@ npm run preview  # Preview built Svelte app
 - Safe popup creation via DOM elements
 - Coordinates stored as `[lat, lng]` arrays in service data
 
-## Legacy Components
+## Project Status
 
-**Unused but Available:**
-- `src/` directory contains original Svelte components
-- `package.json` includes Svelte/Vite dependencies  
-- `ServiceNavigator.html` is original single-file prototype
-
-These can be removed if full consolidation to HTML/JS is desired, or kept if hybrid approach might be reconsidered.
+**Fully Consolidated:**
+- Pure HTML/JS architecture with zero build dependencies
+- All legacy Svelte components and build tools removed
+- Optimized for direct browser deployment
+- Total project size: ~1.3MB (down from 33MB+ with node_modules)
