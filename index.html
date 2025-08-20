@@ -47,7 +47,7 @@
                     <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
                 </button>
                 <div class="bg-blue-600 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <i id="header-icon" data-lucide="search" class="w-6 h-6 text-white"></i>
                 </div>
                 <h1 class="text-xl font-bold text-gray-800">Community Services Navigator</h1>
             </div>
@@ -388,6 +388,11 @@
                     option.classList.add('bg-blue-50', 'border-l-4', 'border-blue-500', 'text-gray-800');
                     option.classList.remove('text-gray-700');
                     
+                    // Update header icon based on selected section
+                    const headerIcon = document.getElementById('header-icon');
+                    headerIcon.setAttribute('data-lucide', getIconForSection(selectedSection));
+                    lucide.createIcons(); // Re-render the icon
+                    
                     // Show selected content section
                     contentSections.forEach(section => {
                         section.classList.add('hidden');
@@ -399,6 +404,16 @@
                     menuDropdown.classList.add('-translate-x-full');
                 });
             });
+
+            // Function to get icon name for each section
+            function getIconForSection(section) {
+                switch(section) {
+                    case 'browse': return 'search';
+                    case 'admin': return 'settings';
+                    case 'contribute': return 'plus';
+                    default: return 'search';
+                }
+            }
 
             function createResultCard(service) {
                 const card = document.createElement('div');
