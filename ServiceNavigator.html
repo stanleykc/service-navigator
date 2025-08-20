@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSDS Community Services Navigator</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* Tailwind gray-50 */
+        }
+        /* Custom scrollbar for results list */
+        .results-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .results-list::-webkit-scrollbar-track {
+            background: #f1f5f9; /* Tailwind slate-100 */
+        }
+        .results-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* Tailwind slate-300 */
+            border-radius: 10px;
+        }
+        .results-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* Tailwind slate-400 */
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow-md z-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 p-2 rounded-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800">Community Services Navigator</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-800">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </button>
+                    <img class="h-8 w-8 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=U" alt="User avatar">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Filters Sidebar -->
+        <aside id="filter-sidebar" class="w-full lg:w-80 xl:w-96 bg-white p-6 border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Search & Filter</h2>
+            
+            <!-- Search Inputs -->
+            <div class="space-y-4">
+                <div>
+                    <label for="keyword-search" class="block text-sm font-medium text-gray-700">Keyword</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input type="text" id="keyword-search" class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 'food pantry'">
+                    </div>
+                </div>
+                <div>
+                    <label for="location-search" class="block text-sm font-medium text-gray-700">Location</label>
+                    <div class="mt-1 relative rounded-md shadow-sm">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="map-pin" class="h-5 w-5 text-gray-400"></i>
+                        </div>
+                        <input type="text" id="location-search" class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Maryland Heights, MO">
+                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-600 hover:text-blue-800">
+                            <i data-lucide="navigation" class="h-5 w-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Sections -->
+            <div class="mt-6 space-y-6">
+                <!-- Service Category -->
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Service Category</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Food</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Housing</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Legal Aid</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Healthcare</span></label>
+                    </div>
+                </div>
+                
+                <!-- Data Source (Federation) -->
+                <div>
+                    <h3 class="font-semibold text-gray-800 mb-2">Data Source</h3>
+                    <div class="space-y-2">
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Alpha Org</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Beta Community Group</span></label>
+                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Gamma County Services</span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+                <button class="text-sm font-medium text-gray-600 hover:text-gray-900">Clear all</button>
+                <button class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Apply</button>
+            </div>
+        </aside>
+
+        <!-- Results & Map Area -->
+        <div class="flex-grow flex flex-col md:flex-row-reverse overflow-hidden">
+            <!-- Map View -->
+            <section class="w-full md:w-1/2 lg:w-3/5 xl:w-2/3 h-64 md:h-auto flex-shrink-0">
+                <div class="bg-gray-300 h-full w-full flex items-center justify-center">
+                    <img src="https://placehold.co/1200x800/E2E8F0/4A5568?text=Map+View+Placeholder" alt="Map placeholder" class="w-full h-full object-cover">
+                </div>
+            </section>
+            
+            <!-- Results List -->
+            <section class="flex-grow bg-slate-50 flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-gray-200 flex-shrink-0">
+                    <p class="text-sm text-gray-600"><span class="font-bold text-gray-800">12 services found</span> for your search</p>
+                </div>
+                <div id="results-container" class="results-list flex-grow overflow-y-auto p-4 space-y-3">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal for Service Details -->
+    <div id="details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-30 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Service Details</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div id="modal-content" class="mt-4 max-h-[70vh] overflow-y-auto pr-2">
+                <!-- Detailed content will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Mock Data ---
+        // This simulates the federated HSDS data coming from the reader.
+        const mockServices = [
+            {
+                id: 1,
+                name: "Community Food Pantry",
+                organization: "Maryland Heights Community Center",
+                address: "2344 McKelvey Rd, Maryland Heights, MO 63043",
+                distance: "1.2 mi",
+                description: "Provides non-perishable food items to families and individuals in need. Proof of residency required.",
+                category: "Food",
+                sourceOrg: "Alpha Org",
+                contact: { phone: "(314) 555-1234", email: "contact@mhcc.org", website: "mhcc.org" },
+                hours: { Monday: "9am - 3pm", Tuesday: "9am - 3pm", Wednesday: "Closed", Thursday: "1pm - 6pm", Friday: "9am - 12pm", Saturday: "Closed", Sunday: "Closed" },
+                eligibility: "Residents of 63043 zip code. Must provide a recent utility bill.",
+                application: "Walk-in during open hours. First-time visitors need to fill out a short form."
+            },
+            {
+                id: 2,
+                name: "West County Legal Aid Clinic",
+                organization: "St. Louis Legal Services",
+                address: "11977 St Charles Rock Rd, Bridgeton, MO 63044",
+                distance: "3.5 mi",
+                description: "Free legal advice and representation for low-income individuals in civil cases, including housing and family law.",
+                category: "Legal Aid",
+                sourceOrg: "Beta Community Group",
+                contact: { phone: "(314) 555-5678", email: "info@stlls.org", website: "stlls.org" },
+                hours: { Monday: "By Appointment", Tuesday: "9am - 4pm", Wednesday: "9am - 4pm", Thursday: "By Appointment", Friday: "9am - 12pm", Saturday: "Closed", Sunday: "Closed" },
+                eligibility: "Income at or below 125% of the federal poverty line.",
+                application: "Call to schedule an intake appointment."
+            },
+            {
+                id: 3,
+                name: "Creve Coeur Mobile Food Market",
+                organization: "Operation Food Search",
+                address: "12301 Olive Blvd, Creve Coeur, MO 63141",
+                distance: "4.1 mi",
+                description: "Mobile market offering fresh produce and groceries at no cost. Schedule varies, check website.",
+                category: "Food",
+                sourceOrg: "Gamma County Services",
+                contact: { phone: "(314) 555-9999", email: "mobile@operationfoodsearch.org", website: "operationfoodsearch.org" },
+                hours: { Monday: "Closed", Tuesday: "10am - 1pm (Every 2nd Tuesday)", Wednesday: "Closed", Thursday: "Closed", Friday: "Closed", Saturday: "10am - 1pm (Every 4th Saturday)", Sunday: "Closed" },
+                eligibility: "Open to all.",
+                application: "No application needed. Please bring your own bags."
+            },
+            {
+                id: 4,
+                name: "Emergency Shelter Assistance",
+                organization: "County Crisis Intervention",
+                address: "7150 Natural Bridge Rd, St. Louis, MO 63121",
+                distance: "8.9 mi",
+                description: "Provides temporary emergency shelter placement and resources for individuals and families experiencing homelessness.",
+                category: "Housing",
+                sourceOrg: "Gamma County Services",
+                contact: { phone: "(314) 555-4321", email: "shelter@co.st-louis.mo.us", website: "stlouiscountymo.gov" },
+                hours: { Monday: "24/7", Tuesday: "24/7", Wednesday: "24/7", Thursday: "24/7", Friday: "24/7", Saturday: "24/7", Sunday: "24/7" },
+                eligibility: "Must be currently homeless within St. Louis County.",
+                application: "Call the 24/7 hotline for immediate assistance."
+            }
+        ];
+
+        // --- UI Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultsContainer = document.getElementById('results-container');
+            const modal = document.getElementById('details-modal');
+            const closeModalBtn = document.getElementById('close-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalContent = document.getElementById('modal-content');
+
+            // Function to create a result card
+            function createResultCard(service) {
+                const card = document.createElement('div');
+                card.className = 'bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md hover:border-blue-400 cursor-pointer transition-all duration-200';
+                card.dataset.serviceId = service.id;
+                
+                let categoryColor = 'bg-gray-100 text-gray-800';
+                if (service.category === 'Food') categoryColor = 'bg-green-100 text-green-800';
+                if (service.category === 'Legal Aid') categoryColor = 'bg-blue-100 text-blue-800';
+                if (service.category === 'Housing') categoryColor = 'bg-yellow-100 text-yellow-800';
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="font-bold text-lg text-gray-900">${service.name}</h3>
+                        <span class="text-sm font-semibold text-gray-600">${service.distance}</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">${service.organization}</p>
+                    <p class="text-sm text-gray-700 mb-3">${service.description}</p>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="${categoryColor} px-2 py-1 rounded-full font-medium">${service.category}</span>
+                        <span class="text-gray-500">Source: <span class="font-semibold">${service.sourceOrg}</span></span>
+                    </div>
+                `;
+                return card;
+            }
+
+            // Function to show service details in modal
+            function showDetails(serviceId) {
+                const service = mockServices.find(s => s.id == serviceId);
+                if (!service) return;
+
+                modalTitle.textContent = service.name;
+                
+                const hoursHtml = Object.entries(service.hours).map(([day, time]) => `
+                    <tr>
+                        <td class="py-1 pr-4 font-medium">${day}</td>
+                        <td class="py-1">${time}</td>
+                    </tr>
+                `).join('');
+
+                modalContent.innerHTML = `
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">Organization</h4>
+                            <p class="text-gray-700">${service.organization}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">Location</h4>
+                            <p class="text-gray-700">${service.address}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">Contact Information</h4>
+                            <div class="text-gray-700 space-y-1">
+                                <p><i data-lucide="phone" class="inline-block h-4 w-4 mr-2"></i>${service.contact.phone}</p>
+                                <p><i data-lucide="mail" class="inline-block h-4 w-4 mr-2"></i>${service.contact.email}</p>
+                                <p><i data-lucide="globe" class="inline-block h-4 w-4 mr-2"></i><a href="#" class="text-blue-600 hover:underline">${service.contact.website}</a></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">Hours of Operation</h4>
+                            <table class="w-full text-left text-sm text-gray-700">
+                                ${hoursHtml}
+                            </table>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">Eligibility</h4>
+                            <p class="text-gray-700">${service.eligibility}</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">How to Apply</h4>
+                            <p class="text-gray-700">${service.application}</p>
+                        </div>
+                         <div>
+                            <p class="text-xs text-center text-gray-500 pt-4 border-t mt-6">Data provided by ${service.sourceOrg}</p>
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons(); // Re-render icons inside modal
+                modal.classList.remove('hidden');
+            }
+
+            // Populate results
+            mockServices.forEach(service => {
+                const card = createResultCard(service);
+                card.addEventListener('click', () => showDetails(card.dataset.serviceId));
+                resultsContainer.appendChild(card);
+            });
+
+            // Modal close events
+            closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
+            // Initialize Lucide icons
+            lucide.createIcons();
+        });
+    </script>
+
+</body>
+</html>
