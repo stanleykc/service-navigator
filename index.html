@@ -17,24 +17,22 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        /* Custom styles */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* Tailwind gray-50 */
+            background-color: #f8fafc;
         }
-        /* Custom scrollbar for results list */
         .results-list::-webkit-scrollbar {
             width: 8px;
         }
         .results-list::-webkit-scrollbar-track {
-            background: #f1f5f9; /* Tailwind slate-100 */
+            background: #f1f5f9;
         }
         .results-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1; /* Tailwind slate-300 */
+            background: #cbd5e1;
             border-radius: 10px;
         }
         .results-list::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; /* Tailwind slate-400 */
+            background: #94a3b8;
         }
     </style>
 </head>
@@ -157,10 +155,9 @@
         </div>
     </div>
 
-
+    <script type="module" src="/src/main.js"></script>
     <script>
-        // --- Mock Data ---
-        // This simulates the federated HSDS data coming from the reader.
+        // Mock service data with coordinates
         const mockServices = [
             {
                 id: 1,
@@ -224,7 +221,7 @@
             }
         ];
 
-        // --- UI Logic ---
+        // UI Logic for results list and modal
         document.addEventListener('DOMContentLoaded', () => {
             const resultsContainer = document.getElementById('results-container');
             const modal = document.getElementById('details-modal');
@@ -232,7 +229,6 @@
             const modalTitle = document.getElementById('modal-title');
             const modalContent = document.getElementById('modal-content');
 
-            // Function to create a result card
             function createResultCard(service) {
                 const card = document.createElement('div');
                 card.className = 'bg-white p-4 rounded-lg border border-gray-200 hover:shadow-md hover:border-blue-400 cursor-pointer transition-all duration-200';
@@ -258,7 +254,6 @@
                 return card;
             }
 
-            // Function to show service details in modal
             function showDetails(serviceId) {
                 const service = mockServices.find(s => s.id == serviceId);
                 if (!service) return;
@@ -309,7 +304,7 @@
                         </div>
                     </div>
                 `;
-                lucide.createIcons(); // Re-render icons inside modal
+                lucide.createIcons();
                 modal.classList.remove('hidden');
             }
 
@@ -332,8 +327,6 @@
             lucide.createIcons();
         });
     </script>
-    
-    <script type="module" src="/src/main.js"></script>
 
 </body>
 </html>
