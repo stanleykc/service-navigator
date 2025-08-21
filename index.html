@@ -1,288 +1,455 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>HSDS Community Services Navigator</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-        }
-        .results-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .results-list::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .results-list::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .results-list::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8fafc;
+      }
+      .results-list::-webkit-scrollbar {
+        width: 8px;
+      }
+      .results-list::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      .results-list::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      .results-list::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
     </style>
-</head>
-<body class="flex flex-col h-screen">
-
+  </head>
+  <body class="flex flex-col h-screen">
     <!-- Header -->
     <header class="bg-white shadow-md z-20">
-        <div class="flex items-center justify-between h-16 px-4">
-            <div class="flex items-center space-x-3">
-                <!-- Hamburger Menu -->
-                <button id="hamburger-menu" class="p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
-                </button>
-                <div class="bg-blue-600 p-2 rounded-lg">
-                    <i id="header-icon" data-lucide="search" class="w-6 h-6 text-white"></i>
-                </div>
-                <h1 class="text-xl font-bold text-gray-800">Community Services Navigator</h1>
-            </div>
-            <div class="flex items-center space-x-4">
-                <button class="text-gray-500 hover:text-gray-800">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                </button>
-                <img class="h-8 w-8 rounded-full object-cover" src="https://placehold.co/100x100/E2E8F0/4A5568?text=U" alt="User avatar">
-            </div>
+      <div class="flex items-center justify-between h-16 px-4">
+        <div class="flex items-center space-x-3">
+          <!-- Hamburger Menu -->
+          <button
+            id="hamburger-menu"
+            class="p-2 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <i data-lucide="menu" class="w-6 h-6 text-gray-700"></i>
+          </button>
+          <div class="bg-blue-600 p-2 rounded-lg">
+            <i id="header-icon" data-lucide="search" class="w-6 h-6 text-white"></i>
+          </div>
+          <h1 class="text-xl font-bold text-gray-800">Community Services Navigator</h1>
         </div>
+        <div class="flex items-center space-x-4">
+          <button class="text-gray-500 hover:text-gray-800">
+            <i data-lucide="bell" class="w-5 h-5"></i>
+          </button>
+          <img
+            class="h-8 w-8 rounded-full object-cover"
+            src="https://placehold.co/100x100/E2E8F0/4A5568?text=U"
+            alt="User avatar"
+          />
+        </div>
+      </div>
     </header>
 
     <!-- Hamburger Menu Dropdown -->
-    <div id="menu-dropdown" class="fixed top-16 left-0 w-64 bg-white shadow-lg border-r border-gray-200 transform -translate-x-full transition-transform duration-300 ease-in-out z-30" style="height: calc(100vh - 4rem);">
-        <div class="p-4">
-            <nav class="space-y-2">
-                <button class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 bg-blue-50 border-l-4 border-blue-500" data-section="browse">
-                    <i data-lucide="search" class="inline-block w-5 h-5 mr-3"></i>
-                    Browse
-                </button>
-                <button class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-700" data-section="admin">
-                    <i data-lucide="settings" class="inline-block w-5 h-5 mr-3"></i>
-                    Admin
-                </button>
-                <button class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-700" data-section="contribute">
-                    <i data-lucide="plus-circle" class="inline-block w-5 h-5 mr-3"></i>
-                    Contribute
-                </button>
-            </nav>
-        </div>
+    <div
+      id="menu-dropdown"
+      class="fixed top-16 left-0 w-64 bg-white shadow-lg border-r border-gray-200 transform -translate-x-full transition-transform duration-300 ease-in-out z-30"
+      style="height: calc(100vh - 4rem)"
+    >
+      <div class="p-4">
+        <nav class="space-y-2">
+          <button
+            class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-800 bg-blue-50 border-l-4 border-blue-500"
+            data-section="browse"
+          >
+            <i data-lucide="search" class="inline-block w-5 h-5 mr-3"></i>
+            Browse
+          </button>
+          <button
+            class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-700"
+            data-section="admin"
+          >
+            <i data-lucide="settings" class="inline-block w-5 h-5 mr-3"></i>
+            Admin
+          </button>
+          <button
+            class="menu-option w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-gray-700"
+            data-section="contribute"
+          >
+            <i data-lucide="plus-circle" class="inline-block w-5 h-5 mr-3"></i>
+            Contribute
+          </button>
+        </nav>
+      </div>
     </div>
 
     <!-- Main Content -->
     <main class="flex-grow flex flex-col lg:flex-row overflow-hidden">
-        
-        <!-- Browse Section (Default) -->
-        <div id="browse-section" class="content-section flex-grow flex flex-col lg:flex-row overflow-hidden">
-            <!-- Filters Sidebar -->
-            <aside id="filter-sidebar" class="w-full lg:w-80 xl:w-96 bg-white p-6 border-r border-gray-200 flex-shrink-0 overflow-y-auto">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Search & Filter</h2>
-            
-            <!-- Search Inputs -->
-            <div class="space-y-4">
-                <div>
-                    <label for="keyword-search" class="block text-sm font-medium text-gray-700">Keyword</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                        <input type="text" id="keyword-search" class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., 'food pantry'">
-                    </div>
+      <!-- Browse Section (Default) -->
+      <div
+        id="browse-section"
+        class="content-section flex-grow flex flex-col lg:flex-row overflow-hidden"
+      >
+        <!-- Filters Sidebar -->
+        <aside
+          id="filter-sidebar"
+          class="w-full lg:w-80 xl:w-96 bg-white p-6 border-r border-gray-200 flex-shrink-0 overflow-y-auto"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Search & Filter</h2>
+
+          <!-- Search Inputs -->
+          <div class="space-y-4">
+            <div>
+              <label for="keyword-search" class="block text-sm font-medium text-gray-700"
+                >Keyword</label
+              >
+              <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="search" class="h-5 w-5 text-gray-400"></i>
                 </div>
-                <div>
-                    <label for="location-search" class="block text-sm font-medium text-gray-700">Location</label>
-                    <div class="mt-1 relative rounded-md shadow-sm">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-lucide="map-pin" class="h-5 w-5 text-gray-400"></i>
-                        </div>
-                        <input type="text" id="location-search" class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="Maryland Heights, MO">
-                        <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-600 hover:text-blue-800">
-                            <i data-lucide="navigation" class="h-5 w-5"></i>
-                        </button>
-                    </div>
+                <input
+                  type="text"
+                  id="keyword-search"
+                  class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="e.g., 'food pantry'"
+                />
+              </div>
+            </div>
+            <div>
+              <label for="location-search" class="block text-sm font-medium text-gray-700"
+                >Location</label
+              >
+              <div class="mt-1 relative rounded-md shadow-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i data-lucide="map-pin" class="h-5 w-5 text-gray-400"></i>
                 </div>
+                <input
+                  type="text"
+                  id="location-search"
+                  class="block w-full pl-10 p-2 border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Maryland Heights, MO"
+                />
+                <button
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-600 hover:text-blue-800"
+                >
+                  <i data-lucide="navigation" class="h-5 w-5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Sections -->
+          <div class="mt-6 space-y-6">
+            <!-- Service Category -->
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2">Service Category</h3>
+              <div class="space-y-2">
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    id="filter-food"
+                    class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    data-category="Food"
+                    checked
+                  />
+                  <span class="ml-2 text-gray-700">Food</span></label
+                >
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    id="filter-housing"
+                    class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    data-category="Housing"
+                  />
+                  <span class="ml-2 text-gray-700">Housing</span></label
+                >
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    id="filter-legal"
+                    class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    data-category="Legal Aid"
+                    checked
+                  />
+                  <span class="ml-2 text-gray-700">Legal Aid</span></label
+                >
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    id="filter-healthcare"
+                    class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    data-category="Healthcare"
+                  />
+                  <span class="ml-2 text-gray-700">Healthcare</span></label
+                >
+              </div>
             </div>
 
-            <!-- Filter Sections -->
-            <div class="mt-6 space-y-6">
-                <!-- Service Category -->
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-2">Service Category</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center"><input type="checkbox" id="filter-food" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Food" checked> <span class="ml-2 text-gray-700">Food</span></label>
-                        <label class="flex items-center"><input type="checkbox" id="filter-housing" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Housing"> <span class="ml-2 text-gray-700">Housing</span></label>
-                        <label class="flex items-center"><input type="checkbox" id="filter-legal" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Legal Aid" checked> <span class="ml-2 text-gray-700">Legal Aid</span></label>
-                        <label class="flex items-center"><input type="checkbox" id="filter-healthcare" class="category-filter h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-category="Healthcare"> <span class="ml-2 text-gray-700">Healthcare</span></label>
-                    </div>
-                </div>
-                
-                <!-- Data Source (Federation) -->
-                <div>
-                    <h3 class="font-semibold text-gray-800 mb-2">Data Source</h3>
-                    <div class="space-y-2">
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Alpha Org</span></label>
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" checked> <span class="ml-2 text-gray-700">Beta Community Group</span></label>
-                        <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"> <span class="ml-2 text-gray-700">Gamma County Services</span></label>
-                    </div>
-                </div>
+            <!-- Data Source (Federation) -->
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2">Data Source</h3>
+              <div class="space-y-2">
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    checked
+                  />
+                  <span class="ml-2 text-gray-700">Alpha Org</span></label
+                >
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    checked
+                  />
+                  <span class="ml-2 text-gray-700">Beta Community Group</span></label
+                >
+                <label class="flex items-center"
+                  ><input
+                    type="checkbox"
+                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <span class="ml-2 text-gray-700">Gamma County Services</span></label
+                >
+              </div>
             </div>
+          </div>
 
-            <!-- Action Buttons -->
-            <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
-                <button class="text-sm font-medium text-gray-600 hover:text-gray-900">Clear all</button>
-                <button class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Apply</button>
-            </div>
+          <!-- Action Buttons -->
+          <div class="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+            <button class="text-sm font-medium text-gray-600 hover:text-gray-900">Clear all</button>
+            <button
+              class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Apply
+            </button>
+          </div>
         </aside>
 
         <!-- Results & Map Area -->
         <div class="flex-grow flex flex-col md:flex-row-reverse overflow-hidden">
-            <!-- Map View -->
-            <section class="w-full md:w-1/2 lg:w-3/5 xl:w-2/3 h-64 md:h-auto flex-shrink-0">
-                <div id="map-container" class="h-full w-full"></div>
-            </section>
-            
-            <!-- Results List -->
-            <section class="flex-grow bg-slate-50 flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-gray-200 flex-shrink-0">
-                    <p class="text-sm text-gray-600"><span class="font-bold text-gray-800">12 services found</span> for your search</p>
-                </div>
-                <div id="results-container" class="results-list flex-grow overflow-y-auto p-4 space-y-3">
-                    <!-- Results will be dynamically inserted here -->
-                </div>
-            </section>
-        </div>
-        </div>
+          <!-- Map View -->
+          <section class="w-full md:w-1/2 lg:w-3/5 xl:w-2/3 h-64 md:h-auto flex-shrink-0">
+            <div id="map-container" class="h-full w-full"></div>
+          </section>
 
-        <!-- Admin Section -->
-        <div id="admin-section" class="content-section flex-grow p-8 bg-gray-50 hidden">
-            <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6">Admin Dashboard</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Data Sources</h3>
-                        <p class="text-gray-600 mb-4">Manage federated data sources and HSDS compliance</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Manage Sources</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Service Categories</h3>
-                        <p class="text-gray-600 mb-4">Configure service categories and taxonomies</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Configure</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">User Management</h3>
-                        <p class="text-gray-600 mb-4">Manage user accounts and permissions</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Manage Users</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Analytics</h3>
-                        <p class="text-gray-600 mb-4">View usage statistics and service metrics</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">View Analytics</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">API Management</h3>
-                        <p class="text-gray-600 mb-4">Manage API keys and integration settings</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Manage APIs</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-3">System Settings</h3>
-                        <p class="text-gray-600 mb-4">Configure system-wide settings and preferences</p>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Settings</button>
-                    </div>
-                </div>
+          <!-- Results List -->
+          <section class="flex-grow bg-slate-50 flex flex-col overflow-hidden">
+            <div class="p-4 border-b border-gray-200 flex-shrink-0">
+              <p class="text-sm text-gray-600">
+                <span class="font-bold text-gray-800">12 services found</span> for your search
+              </p>
             </div>
+            <div
+              id="results-container"
+              class="results-list flex-grow overflow-y-auto p-4 space-y-3"
+            >
+              <!-- Results will be dynamically inserted here -->
+            </div>
+          </section>
         </div>
+      </div>
 
-        <!-- Contribute Section -->
-        <div id="contribute-section" class="content-section flex-grow p-8 bg-gray-50 hidden">
-            <div class="max-w-3xl mx-auto">
-                <h2 class="text-3xl font-bold text-gray-900 mb-6">Contribute to Community Services</h2>
-                <div class="bg-white p-8 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Add New Service</h3>
-                    <form class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Service Name</label>
-                                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Community Food Pantry">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
-                                <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Maryland Heights Community Center">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                            <input type="text" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="2344 McKelvey Rd, Maryland Heights, MO 63043">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                            <textarea rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Describe the service provided..."></textarea>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
-                                    <option>Food</option>
-                                    <option>Housing</option>
-                                    <option>Legal Aid</option>
-                                    <option>Healthcare</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                                <input type="tel" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="(314) 555-1234">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="contact@example.org">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                                <input type="url" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="example.org">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Eligibility Requirements</label>
-                            <textarea rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Who is eligible for this service?"></textarea>
-                        </div>
-                        <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-                            <p class="text-sm text-gray-600">Service submissions are reviewed before being published.</p>
-                            <button type="submit" class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Submit Service</button>
-                        </div>
-                    </form>
-                </div>
+      <!-- Admin Section -->
+      <div id="admin-section" class="content-section flex-grow p-8 bg-gray-50 hidden">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">Admin Dashboard</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">Data Sources</h3>
+              <p class="text-gray-600 mb-4">Manage federated data sources and HSDS compliance</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Manage Sources
+              </button>
             </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">Service Categories</h3>
+              <p class="text-gray-600 mb-4">Configure service categories and taxonomies</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Configure
+              </button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">User Management</h3>
+              <p class="text-gray-600 mb-4">Manage user accounts and permissions</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Manage Users
+              </button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">Analytics</h3>
+              <p class="text-gray-600 mb-4">View usage statistics and service metrics</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                View Analytics
+              </button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">API Management</h3>
+              <p class="text-gray-600 mb-4">Manage API keys and integration settings</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Manage APIs
+              </button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+              <h3 class="text-xl font-semibold text-gray-800 mb-3">System Settings</h3>
+              <p class="text-gray-600 mb-4">Configure system-wide settings and preferences</p>
+              <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Settings
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Contribute Section -->
+      <div id="contribute-section" class="content-section flex-grow p-8 bg-gray-50 hidden">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">Contribute to Community Services</h2>
+          <div class="bg-white p-8 rounded-lg shadow-md">
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">Add New Service</h3>
+            <form class="space-y-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Service Name</label>
+                  <input
+                    type="text"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Community Food Pantry"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+                  <input
+                    type="text"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Maryland Heights Community Center"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                <input
+                  type="text"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="2344 McKelvey Rd, Maryland Heights, MO 63043"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  rows="4"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Describe the service provided..."
+                ></textarea>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option>Food</option>
+                    <option>Housing</option>
+                    <option>Legal Aid</option>
+                    <option>Healthcare</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                  <input
+                    type="tel"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="(314) 555-1234"
+                  />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input
+                    type="email"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="contact@example.org"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                  <input
+                    type="url"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="example.org"
+                  />
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"
+                  >Eligibility Requirements</label
+                >
+                <textarea
+                  rows="3"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Who is eligible for this service?"
+                ></textarea>
+              </div>
+              <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+                <p class="text-sm text-gray-600">
+                  Service submissions are reviewed before being published.
+                </p>
+                <button
+                  type="submit"
+                  class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Submit Service
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Modal for Service Details -->
-    <div id="details-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 10000;">
-        <div class="relative top-20 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
-            <div class="flex justify-between items-center pb-3 border-b">
-                <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Service Details</h3>
-                <button id="close-modal" class="text-gray-400 hover:text-gray-600">
-                    <i data-lucide="x" class="h-6 w-6"></i>
-                </button>
-            </div>
-            <div id="modal-content" class="mt-4 max-h-[70vh] overflow-y-auto pr-2">
-                <!-- Detailed content will be dynamically inserted here -->
-            </div>
+    <div
+      id="details-modal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden"
+      style="z-index: 10000"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white"
+      >
+        <div class="flex justify-between items-center pb-3 border-b">
+          <h3 id="modal-title" class="text-2xl font-bold text-gray-900">Service Details</h3>
+          <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+            <i data-lucide="x" class="h-6 w-6"></i>
+          </button>
         </div>
+        <div id="modal-content" class="mt-4 max-h-[70vh] overflow-y-auto pr-2">
+          <!-- Detailed content will be dynamically inserted here -->
+        </div>
+      </div>
     </div>
 
     <!-- Leaflet JS -->
@@ -292,7 +459,7 @@
       import { dataService } from './js/data-service.js';
       import { SafeDOM } from './js/dom-utils.js';
       import { createServiceMap } from './js/components/service-map.js';
-      
+
       // Service map instance
       let serviceMap = null;
 
@@ -318,145 +485,148 @@
         });
 
         // Close menu when clicking outside
-        document.addEventListener('click', (event) => {
+        document.addEventListener('click', event => {
           if (!hamburgerMenu.contains(event.target) && !menuDropdown.contains(event.target)) {
             menuDropdown.classList.add('-translate-x-full');
           }
         });
 
-            // Handle menu option selection
-            menuOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    const selectedSection = option.dataset.section;
-                    
-                    // Update menu option styles
-                    menuOptions.forEach(opt => {
-                        opt.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-500', 'text-gray-800');
-                        opt.classList.add('text-gray-700');
-                    });
-                    
-                    option.classList.add('bg-blue-50', 'border-l-4', 'border-blue-500', 'text-gray-800');
-                    option.classList.remove('text-gray-700');
-                    
-                    // Update header icon based on selected section
-                    const headerIcon = document.getElementById('header-icon');
-                    headerIcon.setAttribute('data-lucide', getIconForSection(selectedSection));
-                    lucide.createIcons(); // Re-render the icon
-                    
-                    // Show selected content section
-                    contentSections.forEach(section => {
-                        section.classList.add('hidden');
-                    });
-                    
-                    document.getElementById(`${selectedSection}-section`).classList.remove('hidden');
-                    
-                    // Close menu after selection
-                    menuDropdown.classList.add('-translate-x-full');
-                });
+        // Handle menu option selection
+        menuOptions.forEach(option => {
+          option.addEventListener('click', () => {
+            const selectedSection = option.dataset.section;
+
+            // Update menu option styles
+            menuOptions.forEach(opt => {
+              opt.classList.remove('bg-blue-50', 'border-l-4', 'border-blue-500', 'text-gray-800');
+              opt.classList.add('text-gray-700');
             });
 
-            // Function to get icon name for each section
-            function getIconForSection(section) {
-                switch(section) {
-                    case 'browse': return 'search';
-                    case 'admin': return 'settings';
-                    case 'contribute': return 'plus';
-                    default: return 'search';
-                }
-            }
+            option.classList.add('bg-blue-50', 'border-l-4', 'border-blue-500', 'text-gray-800');
+            option.classList.remove('text-gray-700');
 
-            // Use SafeDOM utility for secure card creation
-            function createResultCard(service) {
-                return SafeDOM.createResultCard(service);
-            }
+            // Update header icon based on selected section
+            const headerIcon = document.getElementById('header-icon');
+            headerIcon.setAttribute('data-lucide', getIconForSection(selectedSection));
+            lucide.createIcons(); // Re-render the icon
 
-            function showDetails(serviceId) {
-                const service = dataService.getServiceById(serviceId);
-                if (!service) return;
-
-                modalTitle.textContent = service.name;
-                
-                // Clear existing content and add new safe content
-                while (modalContent.firstChild) {
-                    modalContent.removeChild(modalContent.firstChild);
-                }
-                
-                const content = SafeDOM.createModalContent(service);
-                modalContent.appendChild(content);
-                
-                lucide.createIcons(); // Re-render icons inside modal
-                modal.classList.remove('hidden');
-            }
-
-            // Function to get selected categories
-            function getSelectedCategories() {
-                const checkboxes = document.querySelectorAll('.category-filter:checked');
-                return Array.from(checkboxes).map(cb => cb.dataset.category);
-            }
-
-            // Function to filter and display results
-            function filterAndDisplayResults() {
-                const selectedCategories = getSelectedCategories();
-                const filteredServices = dataService.getServicesByCategories(selectedCategories);
-
-                // Clear existing results
-                resultsContainer.innerHTML = '';
-
-                // Update count
-                const countElement = document.querySelector('.p-4 .font-bold');
-                if (countElement) {
-                    countElement.textContent = `${filteredServices.length} services found`;
-                }
-
-                // Populate filtered results
-                filteredServices.forEach(service => {
-                    const card = createResultCard(service);
-                    card.addEventListener('click', () => showDetails(card.dataset.serviceId));
-                    resultsContainer.appendChild(card);
-                });
-
-                // Update map with filtered services
-                if (serviceMap) {
-                    serviceMap.updateServices(filteredServices);
-                }
-            }
-
-            // Add event listeners to category filters
-            document.querySelectorAll('.category-filter').forEach(checkbox => {
-                checkbox.addEventListener('change', filterAndDisplayResults);
+            // Show selected content section
+            contentSections.forEach(section => {
+              section.classList.add('hidden');
             });
 
-            // Initial population
-            filterAndDisplayResults();
+            document.getElementById(`${selectedSection}-section`).classList.remove('hidden');
 
-            // Modal close events
-            closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
-            window.addEventListener('click', (event) => {
-                if (event.target == modal) {
-                    modal.classList.add('hidden');
-                }
-            });
-
-            // Initialize map component
-            serviceMap = createServiceMap('map-container');
-            
-            // Set up map event listeners
-            serviceMap.on('map-ready', () => {
-                console.log('Map initialized successfully');
-            });
-            
-            serviceMap.on('service-click', (service) => {
-                showDetails(service.id);
-            });
-            
-            // Initialize map with services
-            await serviceMap.init();
-            serviceMap.updateServices(dataService.getAllServices());
-            
-            // Initialize Lucide icons
-            lucide.createIcons();
+            // Close menu after selection
+            menuDropdown.classList.add('-translate-x-full');
+          });
         });
-    </script>
 
-</body>
+        // Function to get icon name for each section
+        function getIconForSection(section) {
+          switch (section) {
+            case 'browse':
+              return 'search';
+            case 'admin':
+              return 'settings';
+            case 'contribute':
+              return 'plus';
+            default:
+              return 'search';
+          }
+        }
+
+        // Use SafeDOM utility for secure card creation
+        function createResultCard(service) {
+          return SafeDOM.createResultCard(service);
+        }
+
+        function showDetails(serviceId) {
+          const service = dataService.getServiceById(serviceId);
+          if (!service) return;
+
+          modalTitle.textContent = service.name;
+
+          // Clear existing content and add new safe content
+          while (modalContent.firstChild) {
+            modalContent.removeChild(modalContent.firstChild);
+          }
+
+          const content = SafeDOM.createModalContent(service);
+          modalContent.appendChild(content);
+
+          lucide.createIcons(); // Re-render icons inside modal
+          modal.classList.remove('hidden');
+        }
+
+        // Function to get selected categories
+        function getSelectedCategories() {
+          const checkboxes = document.querySelectorAll('.category-filter:checked');
+          return Array.from(checkboxes).map(cb => cb.dataset.category);
+        }
+
+        // Function to filter and display results
+        function filterAndDisplayResults() {
+          const selectedCategories = getSelectedCategories();
+          const filteredServices = dataService.getServicesByCategories(selectedCategories);
+
+          // Clear existing results
+          resultsContainer.innerHTML = '';
+
+          // Update count
+          const countElement = document.querySelector('.p-4 .font-bold');
+          if (countElement) {
+            countElement.textContent = `${filteredServices.length} services found`;
+          }
+
+          // Populate filtered results
+          filteredServices.forEach(service => {
+            const card = createResultCard(service);
+            card.addEventListener('click', () => showDetails(card.dataset.serviceId));
+            resultsContainer.appendChild(card);
+          });
+
+          // Update map with filtered services
+          if (serviceMap) {
+            serviceMap.updateServices(filteredServices);
+          }
+        }
+
+        // Add event listeners to category filters
+        document.querySelectorAll('.category-filter').forEach(checkbox => {
+          checkbox.addEventListener('change', filterAndDisplayResults);
+        });
+
+        // Initial population
+        filterAndDisplayResults();
+
+        // Modal close events
+        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        window.addEventListener('click', event => {
+          if (event.target == modal) {
+            modal.classList.add('hidden');
+          }
+        });
+
+        // Initialize map component
+        serviceMap = createServiceMap('map-container');
+
+        // Set up map event listeners
+        serviceMap.on('map-ready', () => {
+          console.log('Map initialized successfully');
+        });
+
+        serviceMap.on('service-click', service => {
+          showDetails(service.id);
+        });
+
+        // Initialize map with services
+        await serviceMap.init();
+        serviceMap.updateServices(dataService.getAllServices());
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+      });
+    </script>
+  </body>
 </html>

@@ -6,8 +6,8 @@
   "scripts": {
     "start": "python3 -m http.server 8080",
     "dev": "python3 -m http.server 8080",
-    "lint": "eslint js/**/*.js index.html",
-    "lint:fix": "eslint js/**/*.js index.html --fix",
+    "lint": "eslint js/**/*.js",
+    "lint:fix": "eslint js/**/*.js --fix",
     "format": "prettier --write js/**/*.js index.html",
     "format:check": "prettier --check js/**/*.js index.html"
   },
