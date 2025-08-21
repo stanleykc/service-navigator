@@ -289,14 +289,16 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Application Scripts -->
     <script type="module">
-        import { mockServices } from './js/data.js';
+        import { dataService } from './js/data-service.js';
         import { SafeDOM } from './js/dom-utils.js';
         
         // Service map instance
         let serviceMap = null;
 
         // UI Logic for results list and modal
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize data service
+            await dataService.init();
             const resultsContainer = document.getElementById('results-container');
             const modal = document.getElementById('details-modal');
             const closeModalBtn = document.getElementById('close-modal');
@@ -368,7 +370,7 @@
             }
 
             function showDetails(serviceId) {
-                const service = mockServices.find(s => s.id == serviceId);
+                const service = dataService.getServiceById(serviceId);
                 if (!service) return;
 
                 modalTitle.textContent = service.name;
@@ -394,9 +396,7 @@
             // Function to filter and display results
             function filterAndDisplayResults() {
                 const selectedCategories = getSelectedCategories();
-                const filteredServices = mockServices.filter(service => 
-                    selectedCategories.includes(service.category)
-                );
+                const filteredServices = dataService.getServicesByCategories(selectedCategories);
 
                 // Clear existing results
                 resultsContainer.innerHTML = '';
@@ -533,7 +533,7 @@
                 }
             }
 
-            serviceMap = new ServiceMap('map-container', mockServices);
+            serviceMap = new ServiceMap('map-container', dataService.getAllServices());
             serviceMap.init();
             
             // Initialize Lucide icons
