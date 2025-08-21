@@ -27,7 +27,7 @@ This is a Community Services Navigator web application that helps users search a
 ## Code Structure
 
 **Core Files:**
-- `index.html` - Main application (461 lines) with hamburger navigation, filtering, component integration
+- `index.html` - Main application with hamburger navigation, filtering, component integration
 - `js/data-service.js` - DataService class for centralized data operations and API abstraction
 - `js/data.js` - HSDS service data source (imported by DataService)
 - `js/dom-utils.js` - SafeDOM class for XSS-safe element creation
@@ -157,3 +157,4 @@ map.fitBounds(services)
 map.on('service-click', callback)
 map.on('map-ready', callback)
 ```
+- remember the style guide and coding conventions for this project
