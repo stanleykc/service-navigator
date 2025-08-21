@@ -5,11 +5,18 @@
   "type": "module",
   "scripts": {
     "start": "python3 -m http.server 8080",
-    "dev": "python3 -m http.server 8080"
+    "dev": "python3 -m http.server 8080",
+    "lint": "eslint js/**/*.js index.html",
+    "lint:fix": "eslint js/**/*.js index.html --fix",
+    "format": "prettier --write js/**/*.js index.html",
+    "format:check": "prettier --check js/**/*.js index.html"
   },
   "keywords": ["community-services", "hsds", "service-discovery", "accessibility"],
   "author": "",
   "license": "MIT",
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5"
+  }
 }

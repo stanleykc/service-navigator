@@ -289,40 +289,40 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Application Scripts -->
     <script type="module">
-        import { dataService } from './js/data-service.js';
-        import { SafeDOM } from './js/dom-utils.js';
-        import { createServiceMap } from './js/components/service-map.js';
-        
-        // Service map instance
-        let serviceMap = null;
+      import { dataService } from './js/data-service.js';
+      import { SafeDOM } from './js/dom-utils.js';
+      import { createServiceMap } from './js/components/service-map.js';
+      
+      // Service map instance
+      let serviceMap = null;
 
-        // UI Logic for results list and modal
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Initialize data service
-            await dataService.init();
-            const resultsContainer = document.getElementById('results-container');
-            const modal = document.getElementById('details-modal');
-            const closeModalBtn = document.getElementById('close-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalContent = document.getElementById('modal-content');
+      // UI Logic for results list and modal
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Initialize data service
+        await dataService.init();
+        const resultsContainer = document.getElementById('results-container');
+        const modal = document.getElementById('details-modal');
+        const closeModalBtn = document.getElementById('close-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
 
-            // Hamburger menu functionality
-            const hamburgerMenu = document.getElementById('hamburger-menu');
-            const menuDropdown = document.getElementById('menu-dropdown');
-            const menuOptions = document.querySelectorAll('.menu-option');
-            const contentSections = document.querySelectorAll('.content-section');
+        // Hamburger menu functionality
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const menuDropdown = document.getElementById('menu-dropdown');
+        const menuOptions = document.querySelectorAll('.menu-option');
+        const contentSections = document.querySelectorAll('.content-section');
 
-            // Toggle menu visibility
-            hamburgerMenu.addEventListener('click', () => {
-                menuDropdown.classList.toggle('-translate-x-full');
-            });
+        // Toggle menu visibility
+        hamburgerMenu.addEventListener('click', () => {
+          menuDropdown.classList.toggle('-translate-x-full');
+        });
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (event) => {
-                if (!hamburgerMenu.contains(event.target) && !menuDropdown.contains(event.target)) {
-                    menuDropdown.classList.add('-translate-x-full');
-                }
-            });
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+          if (!hamburgerMenu.contains(event.target) && !menuDropdown.contains(event.target)) {
+            menuDropdown.classList.add('-translate-x-full');
+          }
+        });
 
             // Handle menu option selection
             menuOptions.forEach(option => {
