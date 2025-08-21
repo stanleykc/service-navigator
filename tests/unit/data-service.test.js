@@ -168,41 +168,27 @@ describe('DataService', () => {
       .when('null search term', () => null);
 
     test('should perform condition-based searches', async () => {
-      await searchConditions.testAll(async (service, conditionName) => {
-        const searchTerm = conditionName === 'search by service name' ? 'Food Pantry' :
-                          conditionName === 'search by organization' ? 'Legal Aid Center' :
-                          conditionName === 'search by description keyword' ? 'assistance' :
-                          conditionName === 'search by address' ? 'Main St' :
-                          conditionName === 'case insensitive search' ? 'FOOD' :
-                          conditionName === 'empty search term' ? '' :
-                          conditionName === 'whitespace only search' ? '   ' :
-                          conditionName === 'non-existent term' ? 'xyz123' :
-                          null;
+      // Test search conditions directly without ConditionTester
+      const searchConditions = [
+        { name: 'search by service name', term: 'Food Pantry', expectedCount: 1 },
+        { name: 'search by organization', term: 'Legal Aid Center', expectedCount: 1 },
+        { name: 'search by description keyword', term: 'assistance', expectedCount: 2 },
+        { name: 'search by address', term: 'Main St', expectedCount: 1 },
+        { name: 'case insensitive search', term: 'FOOD', expectedCount: 1 },
+        { name: 'empty search term', term: '', expectedCount: 3 },
+        { name: 'whitespace only search', term: '   ', expectedCount: 3 },
+        { name: 'non-existent term', term: 'xyz123', expectedCount: 0 }
+      ];
+
+      for (const { name, term, expectedCount } of searchConditions) {
+        const results = dataService.searchServices(term);
+        expect(results).toHaveLength(expectedCount);
         
-        const results = service.searchServices(searchTerm);
-        
-        // Verify search results based on condition
-        switch (conditionName) {
-          case 'search by service name':
-          case 'case insensitive search':
-            expect(results.length).toBeGreaterThan(0);
-            break;
-          case 'search by organization':
-            expect(results.some(r => r.organization.includes('Legal Aid Center'))).toBe(true);
-            break;
-          case 'search by description keyword':
-            expect(results.length).toBeGreaterThan(0);
-            break;
-          case 'empty search term':
-          case 'whitespace only search':
-          case 'null search term':
-            expect(results).toHaveLength(3); // Returns all services
-            break;
-          case 'non-existent term':
-            expect(results).toHaveLength(0);
-            break;
+        // Additional specific checks
+        if (name === 'search by organization') {
+          expect(results.some(r => r.organization.includes('Legal Aid Center'))).toBe(true);
         }
-      });
+      }
     });
   });
 

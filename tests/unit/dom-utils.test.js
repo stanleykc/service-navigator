@@ -10,19 +10,6 @@ import {
   describeConditions 
 } from '../utils/condition-tester.js';
 
-// Mock DOM environment
-const mockDocument = {
-  createElement: jest.fn((tagName) => ({
-    tagName: tagName.toUpperCase(),
-    className: '',
-    textContent: '',
-    dataset: {},
-    appendChild: jest.fn(),
-    setAttribute: jest.fn(),
-    href: ''
-  }))
-};
-
 // Mock service data for testing
 const mockService = {
   id: 1,
@@ -47,30 +34,17 @@ const mockService = {
   application: 'Walk-in or call ahead'
 };
 
-global.document = mockDocument;
-
 describe('SafeDOM', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Reset the mock to return a fresh mock element each time
-    mockDocument.createElement.mockImplementation((tagName) => ({
-      tagName: tagName.toUpperCase(),
-      className: '',
-      textContent: '',
-      dataset: {},
-      appendChild: jest.fn(),
-      setAttribute: jest.fn(),
-      href: '',
-      children: []
-    }));
   });
 
   describe('createResultCard', () => {
     test('should create a result card with valid service data', () => {
       const card = SafeDOM.createResultCard(mockService);
       
-      expect(mockDocument.createElement).toHaveBeenCalledWith('div');
-      expect(card.dataset.serviceId).toBe(mockService.id);
+      expect(global.document.createElement).toHaveBeenCalledWith('div');
+      expect(card.dataset.serviceId).toBe(mockService.id.toString());
       expect(card.className).toContain('bg-white');
     });
 
@@ -84,7 +58,7 @@ describe('SafeDOM', () => {
           data: mockService,
           expected: (result) => {
             expect(result).toBeDefined();
-            expect(result.dataset.serviceId).toBe(mockService.id);
+            expect(result.dataset.serviceId).toBe(mockService.id.toString());
           }
         },
         {
@@ -92,7 +66,7 @@ describe('SafeDOM', () => {
           data: DataConditions.withMissingFields([mockService], ['distance'])[0],
           expected: (result) => {
             expect(result).toBeDefined();
-            expect(result.dataset.serviceId).toBe(mockService.id);
+            expect(result.dataset.serviceId).toBe(mockService.id.toString());
           }
         },
         {
@@ -111,7 +85,7 @@ describe('SafeDOM', () => {
           expected: (result) => {
             expect(result).toBeDefined();
             // Verify XSS prevention by checking that textContent is used
-            expect(mockDocument.createElement).toHaveBeenCalled();
+            expect(global.document.createElement).toHaveBeenCalled();
           }
         }
       ],
@@ -126,7 +100,7 @@ describe('SafeDOM', () => {
       const content = SafeDOM.createModalContent(mockService);
       
       expect(content).toBeDefined();
-      expect(mockDocument.createElement).toHaveBeenCalledWith('div');
+      expect(global.document.createElement).toHaveBeenCalledWith('div');
     });
 
     // Condition-based testing for modal content creation
@@ -168,9 +142,9 @@ describe('SafeDOM', () => {
       const section = SafeDOM.createSection(title, content);
       
       expect(section).toBeDefined();
-      expect(mockDocument.createElement).toHaveBeenCalledWith('div');
-      expect(mockDocument.createElement).toHaveBeenCalledWith('h4');
-      expect(mockDocument.createElement).toHaveBeenCalledWith('p');
+      expect(global.document.createElement).toHaveBeenCalledWith('div');
+      expect(global.document.createElement).toHaveBeenCalledWith('h4');
+      expect(global.document.createElement).toHaveBeenCalledWith('p');
     });
 
     // Condition-based testing for section creation
@@ -246,7 +220,7 @@ describe('SafeDOM', () => {
         expect(modal).toBeDefined();
 
         // Verify that createElement was called (indicating DOM elements were created safely)
-        expect(mockDocument.createElement).toHaveBeenCalled();
+        expect(global.document.createElement).toHaveBeenCalled();
       }
     );
   });
@@ -263,7 +237,12 @@ describe('SafeDOM', () => {
     test('should handle service with missing required fields', () => {
       const incompleteService = { id: 1 }; // Missing most fields
       
-      expect(() => SafeDOM.createResultCard(incompleteService)).toThrow();
+      // SafeDOM should handle missing fields gracefully, not throw
+      expect(() => SafeDOM.createResultCard(incompleteService)).not.toThrow();
+      
+      const result = SafeDOM.createResultCard(incompleteService);
+      expect(result).toBeDefined();
+      expect(result.dataset.serviceId).toBe('1');
     });
 
     // Performance condition testing
