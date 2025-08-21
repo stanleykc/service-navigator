@@ -51,20 +51,23 @@ The Service Navigator uses a **consolidated pure HTML/JavaScript architecture** 
 ```
 service-navigator/
 ├── index.html              # Main application entry point
-├── js/                     # Modular JavaScript components
-│   ├── data.js            # Centralized HSDS service data
-│   ├── dom-utils.js       # XSS-safe DOM manipulation utilities
-│   └── map.js             # Standalone map implementation
-├── ServiceNavigator.html   # Legacy prototype (reference)
-└── src/                   # Legacy Svelte components (unused)
+├── js/                     # Modular JavaScript architecture
+│   ├── components/         # Reusable component system
+│   │   └── service-map.js  # ServiceMap component with event-driven architecture
+│   ├── data-service.js     # DataService class for centralized data operations
+│   ├── data.js            # HSDS service data source
+│   └── dom-utils.js       # SafeDOM class for XSS-safe DOM manipulation
+├── package.json           # NPM configuration with lint/format scripts
+└── .eslintrc.json         # ESLint configuration for code quality
 ```
 
 ### Key Architecture Decisions
 
 - **Zero Build Process**: Direct browser deployment using ES6 modules
-- **Security First**: XSS-safe DOM manipulation, no `innerHTML` usage
+- **Component-Driven**: Reusable, event-driven components for scalability
+- **Service Layer**: Centralized data operations with DataService abstraction
+- **Security First**: XSS-safe DOM manipulation via SafeDOM class
 - **CDN Dependencies**: External libraries loaded via CDN for simplicity
-- **Single Source of Truth**: Centralized data management in `/js/data.js`
 
 ### Technology Stack
 
@@ -104,6 +107,61 @@ The application follows the Human Services Data Specification (HSDS) standard:
 }
 ```
 
+## 🔧 Component APIs
+
+### DataService
+
+The DataService class provides centralized data operations:
+
+```javascript
+// Initialization
+import { DataService } from './js/data-service.js';
+const dataService = new DataService();
+await dataService.init();
+
+// Data retrieval
+const allServices = dataService.getAllServices();
+const healthServices = dataService.getServicesByCategories(['Healthcare']);
+const service = dataService.getServiceById(1);
+const filtered = dataService.filterServices({ 
+  categories: ['Food'], 
+  sourceOrgs: ['Alpha Org'],
+  keyword: 'pantry' 
+});
+
+// Utilities
+const categories = dataService.getCategories();
+const stats = dataService.getStats();
+```
+
+### ServiceMap Component
+
+The ServiceMap component provides interactive map functionality:
+
+```javascript
+// Initialization
+import { createServiceMap } from './js/components/service-map.js';
+const map = createServiceMap('map-container', {
+  defaultZoom: 12,
+  markerRadius: 8,
+  categoryColors: { Food: '#10b981', Healthcare: '#3b82f6' }
+});
+await map.init();
+
+// Data management
+map.updateServices(services);
+map.addService(newService);
+map.removeService(serviceId);
+
+// Navigation
+map.centerOnService(serviceId);
+map.fitBounds(services);
+
+// Events
+map.on('service-click', (serviceId) => console.log('Clicked:', serviceId));
+map.on('map-ready', () => console.log('Map initialized'));
+```
+
 ## 🎨 User Interface
 
 ### Main Sections
@@ -134,25 +192,34 @@ The application follows the Human Services Data Specification (HSDS) standard:
 
 ```bash
 # Start local server (required for ES6 modules)
+npm run dev
+# or
 python3 -m http.server 8080
 
-# Access application
-open http://localhost:8080
+# Install dependencies for linting/formatting
+npm install
+
+# Run linting and formatting
+npm run lint
+npm run format
 ```
 
 ### Code Organization
 
 **Core Files:**
-- `index.html` - Main application (540+ lines)
-- `js/data.js` - Service data exports
-- `js/dom-utils.js` - SafeDOM utility class
-- `js/map.js` - Map implementation (standalone)
+- `index.html` - Main application with component integration
+- `js/data-service.js` - DataService class for centralized data operations
+- `js/data.js` - HSDS service data source (imported by DataService)
+- `js/dom-utils.js` - SafeDOM class for XSS-safe element creation
+- `js/components/service-map.js` - ServiceMap component for interactive maps
 
 **Development Workflow:**
-1. Edit `index.html` for UI/UX changes
-2. Modify `js/data.js` for service data updates  
-3. Use `js/dom-utils.js` patterns for new DOM elements
-4. Test changes via local HTTP server
+1. Edit `index.html` for UI/UX changes and component integration
+2. Use `js/data-service.js` for data operations and business logic
+3. Modify `js/data.js` for raw service data updates
+4. Create new components in `js/components/` for reusable functionality
+5. Use `js/dom-utils.js` for safe DOM creation patterns
+6. Test via local HTTP server and run `npm run lint` before committing
 
 ### Security Features
 
@@ -165,8 +232,9 @@ open http://localhost:8080
 
 1. **Update Data**: Add service objects to `js/data.js`
 2. **Follow HSDS Format**: Ensure all required fields are present
-3. **Test Filtering**: Verify services appear in appropriate categories
-4. **Map Integration**: Include valid coordinates for map markers
+3. **Use DataService**: Access via DataService class methods
+4. **Test Filtering**: Verify services appear in appropriate categories
+5. **Map Integration**: Include valid coordinates as `[lat, lng]` arrays
 
 Example:
 ```javascript
@@ -177,10 +245,18 @@ export const mockServices = [
     id: 5,
     name: "New Community Service",
     organization: "Local Organization",
+    category: "Healthcare",
+    sourceOrg: "Alpha Org",
     // ... other required fields
-    coordinates: [latitude, longitude]
+    coordinates: [38.7190, -90.4218] // [latitude, longitude]
   }
 ];
+
+// Access via DataService
+import { DataService } from './js/data-service.js';
+const dataService = new DataService();
+await dataService.init();
+const newService = dataService.getServiceById(5);
 ```
 
 ## 🌐 Deployment
@@ -204,11 +280,38 @@ The application can be deployed to any static hosting service:
 
 ## 🧪 Testing
 
+### Automated Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+
+# Run condition-based tests only
+npm run test:conditions
+
+# Run linting
+npm run lint
+
+# Run code formatting check
+npm run format:check
+
+# Fix formatting issues
+npm run format
+```
+
 ### Manual Testing Checklist
 
 - [ ] Service filtering by category works
-- [ ] Map markers display correctly
+- [ ] Map markers display correctly with proper categories
 - [ ] Service detail modals open and display all information
+- [ ] ServiceMap component events trigger correctly
+- [ ] DataService filtering and search functions work
 - [ ] Responsive design works on mobile
 - [ ] Hamburger menu navigation functions
 - [ ] External links in contact information work
@@ -233,10 +336,13 @@ The application can be deployed to any static hosting service:
 
 ### Code Standards
 
-- Use SafeDOM utility for all dynamic content
-- Follow existing code organization patterns
+- Use SafeDOM class for all dynamic content creation
+- Follow component-driven architecture patterns
+- Use DataService class for all data operations
 - Maintain HSDS compliance for service data
+- Run `npm run lint` and `npm run format` before committing
 - Test across multiple browsers and devices
+- Follow event-driven architecture for component communication
 
 ## 📝 License
 
@@ -250,12 +356,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📈 Roadmap
 
-- [ ] Real HSDS API integration
-- [ ] Advanced search functionality
-- [ ] User accounts and favorites
+### Completed ✅
+- [x] Component-driven architecture with ServiceMap component
+- [x] DataService class for centralized data operations
+- [x] Event-driven component communication
+- [x] Code quality tools (ESLint, Prettier)
+- [x] XSS-safe DOM manipulation with SafeDOM class
+
+### Planned 📋
+- [ ] Real HSDS API integration via DataService
+- [ ] Advanced search functionality with filters
+- [ ] User accounts and favorites system
 - [ ] Service provider dashboard
 - [ ] Multi-language support
 - [ ] Progressive Web App features
+- [ ] Additional reusable components (ServiceCard, FilterPanel)
 
 ---
 
