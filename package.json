@@ -1,19 +1,32 @@
 {
   "name": "service-navigator",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Community Services Navigator - HSDS compliant service discovery application",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "start": "python3 -m http.server 8080",
+    "dev": "python3 -m http.server 8080",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:conditions": "jest --testPathPattern=conditions",
+    "lint": "eslint js/**/*.js tests/**/*.js",
+    "lint:fix": "eslint js/**/*.js tests/**/*.js --fix",
+    "format": "prettier --write js/**/*.js tests/**/*.js index.html",
+    "format:check": "prettier --check js/**/*.js tests/**/*.js index.html"
   },
+  "keywords": ["community-services", "hsds", "service-discovery", "accessibility"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
-    "svelte": "^4.0.5",
-    "vite": "^5.0.0"
-  },
-  "dependencies": {
-    "leaflet": "^1.9.4"
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@jest/globals": "^29.7.0",
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "babel-jest": "^29.7.0"
   }
 }
